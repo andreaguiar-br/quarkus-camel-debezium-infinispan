@@ -1,0 +1,66 @@
+version: '3.6'
+
+services:
+  infinispan-1:
+    hostname: infinispan_1
+    container_name: infinispan_1
+    image: quay.io/infinispan/server:13.0
+    restart: always
+    # command: custom/clustered-docker
+    # command: /my-config/clustered-docker
+    # depends_on:
+      # - oracle
+    environment:
+      - IDENTITIES_BATCH="/user-config/identities.batch"
+    ports:
+      - 11222:11222
+    volumes:
+      - $PWD/driver:/opt/infinispan/server/lib/
+      - $PWD/custom:/my-config/
+      - $PWD/user-config:/user-config/
+      # - vol-infinispan_1:/opt/infinispan/server/data
+  infinispan-2:
+    hostname: infinispan_2
+    container_name: infinispan_2
+    image: quay.io/infinispan/server:13.0
+    restart: always
+    # command: custom/clustered-docker
+    # command: /my-config/clustered-docker
+    # depends_on:
+      # - oracle
+    environment:
+      - IDENTITIES_BATCH="/user-config/identities.batch"
+    ports:
+      - 11223:11222
+    volumes:
+      - $PWD/driver:/opt/infinispan/server/lib/
+      - $PWD/custom:/my-config/
+      - $PWD/user-config:/user-config/
+      # - vol-infinispan_2:/opt/infinispan/server/data
+  infinispan-3:
+    hostname: infinispan_3
+    container_name: infinispan_3
+    image: quay.io/infinispan/server:13.0
+    restart: always
+    # command: custom/clustered-docker
+    # command: /my-config/clustered-docker
+    # depends_on:
+      # - oracle
+    environment:
+      - IDENTITIES_BATCH="/user-config/identities.batch"
+    ports:
+      - 11224:11222
+    volumes:
+      - $PWD/driver:/opt/infinispan/server/lib/
+      - $PWD/custom:/my-config/
+      - $PWD/user-config:/user-config/
+      # - vol-infinispan_3:/opt/infinispan/server/data
+
+networks:
+  default:
+    driver: bridge
+
+# volumes:
+#   vol-infinispan_1:
+#   vol-infinispan_2:
+#   vol-infinispan_3:

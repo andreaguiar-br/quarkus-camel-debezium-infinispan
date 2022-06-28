@@ -1,0 +1,31 @@
+version: '3.1'
+
+services:
+
+  db:
+    image: debezium/postgres
+    # image: postgres
+    container_name: postgres
+    hostname: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER:  admin
+    ports:
+      - 5432:5432
+    volumes:
+      - vol-postgresdbz:/var/lib/postgresql/data
+      - ./postgres.conf:/usr/share/postgresql/postgresql.conf
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:  
+      - 8080:8080
+
+volumes:
+  vol-postgresdbz:
+
+networks:
+  default:
+    driver: bridge
