@@ -1,4 +1,4 @@
-# Quarkus-Camel com Debezium e Infinispan
+# Quarkus-Camel with Debezium and Infinispan
 
 ## Project for Leaning  -  It's not intended to be used in production
 
@@ -75,11 +75,14 @@ CREATE TABLE "public"."SalarioCDC" (
 
 ALTER TABLE ONLY "public"."SalarioCDC" ADD CONSTRAINT "SalarioCDC_cd_cli_fkey" FOREIGN KEY (cd_cli) REFERENCES "ClienteCDC"(cd_cli) ON UPDATE CASCADE ON DELETE RESTRICT NOT DEFERRABLE;
 ```
-3. Go to Quarkus-kml-postgres2infinispan folder and execute the application
+3. Running the source-sink camel quarkus
+* Go to Quarkus-kml-postgres2infinispan folder and execute the application
 ```shell script
 cd quarkus-kml-postgres2infinispan
 ./mvnw compile quarkus:dev
 ```
+* Any additional documentation of this project is [here](./quarkus-kml-postgres2infinispan/README.md)
+
 
 ## Working
 Once the application is up, you can use the Adminer UI (localhost:8080) to add, update and delete rows and see how it appears in the infinispan web console (localhost:11222).
