@@ -88,5 +88,11 @@ cd quarkus-kml-postgres2infinispan
 Once the application is up, you can use the Adminer UI (localhost:8080) to add, update and delete rows and see how it appears in the infinispan web console (localhost:11222).
 
 ## Backlog
+### In this project
+1. Treatment of deletion operation from DB
+2. Struct and expose metrics
 
-In my backlog, I'am planning to create another component to listen to Infinispan events of the 'cliente' cache and calculaing how long it takes to go from table to cache using this approach.
+
+### Complement of project
+1. Component to make Ramdom operations in the BD
+2. Another component to listen to Infinispan events of the 'cliente' cache and calculaing how long it takes to go from table to cache using this approach.
