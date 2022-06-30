@@ -89,4 +89,4 @@ Once the application is up, you can use the Adminer UI (localhost:8080) to add, 
 
 ## Backlog
 
-In my backlog, I'am planning to create another component to listen to Infinispan events of the 'cliente' cache and calculaing how log it took to go from table to cache using this approach.
+In my backlog, I'am planning to create another component to listen to Infinispan events of the 'cliente' cache and calculaing how long it takes to go from table to cache using this approach.
