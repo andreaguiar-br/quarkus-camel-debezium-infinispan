@@ -75,13 +75,13 @@ public class ClienteCDC {
    }
 
    public void setSalarios(Set<SalarioCDC> salarios) {
-      if (salarios.stream().allMatch(sal -> sal.getCd_cli() == this.cd_cli)) {
+      if (salarios.stream().allMatch(sal -> sal.getCd_cli().intValue() == this.cd_cli.intValue())) {
          this.salarios = salarios;
       }
    }
 
    public void addOrUpdateSalario(SalarioCDC salario) {
-      if (this.cd_cli == salario.getCd_cli()) {
+      if (this.cd_cli.intValue() == salario.getCd_cli().intValue()) {
 
        this.salarios
              .removeIf(sal -> sal.getCd_cli().intValue() == salario.getCd_cli().intValue() 

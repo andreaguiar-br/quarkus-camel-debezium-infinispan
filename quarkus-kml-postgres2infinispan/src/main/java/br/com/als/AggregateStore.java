@@ -7,13 +7,17 @@ package br.com.als;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.infinispan.InfinispanConstants;
+import org.jboss.logging.Logger;
 
 import br.com.als.schema.ClienteCDC;
 import br.com.als.schema.SalarioCDC;
+import br.com.als.schema.SalariosOrfaos;
 
 public class AggregateStore {
 
     static String PROP_AGGREGATE = "aggregate";
+    private static final Logger LOGGER = Logger.getLogger(AggregateStore.class);
 
     public AggregateStore() {
     }
@@ -22,10 +26,18 @@ public class AggregateStore {
         final ClienteCDC clienteCDC = exchange.getMessage().getBody(ClienteCDC.class);
         final ProducerTemplate send = exchange.getContext().createProducerTemplate();
 
-        // ClienteCDC aggregate = send.requestBody(Rotas.ROUTE_GET_AGGREGATE, clienteCDC.getCd_cli(), ClienteCDC.class);
-        // if (aggregate == null) {
-            // aggregate = clienteCDC;
-        // }
+        ClienteCDC aggregate = send.requestBody(Rotas.ROUTE_GET_AGGREGATE, clienteCDC.getCd_cli(), ClienteCDC.class);
+        if (aggregate == null) {
+        
+            aggregate = clienteCDC;
+        
+            SalariosOrfaos salariosOrfaos = send.requestBody(Rotas.ROUTE_GET_TEMP_SALARY, clienteCDC.getCd_cli(), SalariosOrfaos.class);
+            if (salariosOrfaos != null) {
+                LOGGER.trace("Salarios Orfaos acharam o pai: : "+salariosOrfaos);
+                aggregate.setSalarios(salariosOrfaos.getSalarios());
+            }
+    
+        }
         updateAggregate(exchange, clienteCDC, send);
         exchange.getMessage().setBody(clienteCDC);
     }
@@ -36,8 +48,12 @@ public class AggregateStore {
         final ProducerTemplate send = exchange.getContext().createProducerTemplate();
 
         ClienteCDC aggregate = send.requestBody(Rotas.ROUTE_GET_AGGREGATE, salario.getCd_cli(), ClienteCDC.class);
-        aggregate.addOrUpdateSalario(salario);
-
+        LOGGER.trace("avaliando aggregate :"+aggregate);
+        if (aggregate != null) {
+            aggregate.addOrUpdateSalario(salario);
+        } else {
+            this.addOrUpdateSalarioOrfao(salario, send);
+        }
         updateAggregate(exchange, aggregate, send);
         exchange.getMessage().setBody(salario);
     }
@@ -46,4 +62,17 @@ public class AggregateStore {
         send.sendBody(Rotas.ROUTE_WRITE_AGGREGATE, aggregate);
         exchange.setProperty(PROP_AGGREGATE, aggregate);
     }
+
+    private void addOrUpdateSalarioOrfao(SalarioCDC salario, ProducerTemplate send) {
+        SalariosOrfaos salariosOrfaos = send.requestBody(Rotas.ROUTE_GET_TEMP_SALARY, salario.getCd_cli(), SalariosOrfaos.class);
+        LOGGER.trace("Salarios Orfaos: : "+salariosOrfaos);
+        if (salariosOrfaos == null){
+          salariosOrfaos = new SalariosOrfaos();
+          salariosOrfaos.setCd_cli(salario.getCd_cli());
+        }
+        salariosOrfaos.addOrUpdateSalario(salario);
+        LOGGER.trace("ENVIANDO TEMP-SALARY: : "+salariosOrfaos);
+        send.sendBodyAndHeader(Rotas.ROUTE_WRITE_TEMP_SALARY, salariosOrfaos, InfinispanConstants.KEY, salario.getCd_cli());
+  }
+
 }

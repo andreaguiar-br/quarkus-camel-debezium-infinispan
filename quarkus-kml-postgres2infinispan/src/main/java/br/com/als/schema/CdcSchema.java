@@ -4,7 +4,7 @@ import org.infinispan.protostream.SerializationContextInitializer;
 import org.infinispan.protostream.annotations.AutoProtoSchemaBuilder;
 
 
-@AutoProtoSchemaBuilder(includeClasses= { ClienteCDC.class, SalarioCDC.class},
+@AutoProtoSchemaBuilder(includeClasses= { ClienteCDC.class, SalarioCDC.class, SalariosOrfaos.class},
       schemaPackageName = "CDC")
 public interface CdcSchema extends SerializationContextInitializer { 
 } 

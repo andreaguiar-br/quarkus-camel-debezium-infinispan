@@ -27,6 +27,9 @@ public class Rotas extends EndpointRouteBuilder {
     @ConfigProperty(name = "camel.debezium.postgres.password")
     private  String postgresPassword;
 
+    @ConfigProperty(name = "camel.debezium.postgres.host")
+    private  String postgresHost;
+
 
     private static final String EVENT_TYPE_SALARIO = ".SalarioCDC";
     private static final String EVENT_TYPE_CLIENTE = ".ClienteCDC";
@@ -34,9 +37,16 @@ public class Rotas extends EndpointRouteBuilder {
     static final String ROUTE_GET_AGGREGATE = "direct:getCliente";
     static final String ROUTE_WRITE_AGGREGATE = "direct:writeCliente";
 
+    static final String ROUTE_GET_TEMP_SALARY = "direct:getSalario";
+    static final String ROUTE_WRITE_TEMP_SALARY = "direct:writeSalario";
+    static final String ROUTE_REMOVE_TEMP_SALARY = "direct:removeSalario";
+
     private final String ROUTE_STORE_CLIENTE_AGGREGATE = "infinispan://"+ ConfigProvider.getConfig()
     .getOptionalValue("camel.infinispan.cache.cliente", String.class).orElse("cliente");
 
+    private final String ROUTE_STORE_SALARY_TEMP_AGGREGATE = "infinispan://"+ ConfigProvider.getConfig()
+    .getOptionalValue("camel.infinispan.cache.salario-temp", String.class).orElse("salario-temp");
+    
     @Override
     public void configure() throws Exception {
         // from(platformHttp("/camel/hello"))
@@ -73,11 +83,33 @@ public class Rotas extends EndpointRouteBuilder {
                 .setHeader(InfinispanConstants.VALUE).body()
                 .to(ROUTE_STORE_CLIENTE_AGGREGATE);
 
+        from(ROUTE_WRITE_TEMP_SALARY)
+                .routeId(Rotas.class.getSimpleName() + ".SalvaSalarioTemp")
+                // .setHeader(InfinispanConstants.KEY).simple("${headers.CamelInfinispanKey}")
+                .setHeader(InfinispanConstants.VALUE).body()
+                .log(LoggingLevel.TRACE, "put Key:${headers.CamelInfinispanKey} / ValueKey:${headers.CamelInfinispanValue} / Body:${body}")
+                // .marshal().json(JsonLibrary.Jackson)
+                // .log(LoggingLevel.INFO, "Marshalled question ${headers} - ${body}");
+                .to(ROUTE_STORE_SALARY_TEMP_AGGREGATE);
+
+        from(ROUTE_GET_TEMP_SALARY)
+                .routeId(Rotas.class.getSimpleName() + ".BuscaSalarioTemp")
+                .setHeader(InfinispanConstants.KEY).body()
+                .setHeader(InfinispanConstants.OPERATION).constant("GET")
+                // .setHeader(InfinispanConstants.KEY).simple("${headers.CamelInfinispanKey}")
+                // .setHeader(InfinispanConstants.VALUE).body()
+                .log(LoggingLevel.TRACE, "get Key:${headers.CamelInfinispanKey} / ValueKey:${headers.CamelInfinispanValue} / Body:${body}")
+                // .marshal().json(JsonLibrary.Jackson)
+                // .log(LoggingLevel.INFO, "Marshalled question ${headers} - ${body}");
+                .to(ROUTE_STORE_SALARY_TEMP_AGGREGATE)
+                .filter(body().isNotNull())
+                .log(LoggingLevel.WARN, "retorno ${body}");
+
         from(debeziumPostgres(
                 postgresUri+"?"
                 +"offsetStorageFileName=./offset-file-1.dat"
                 +"&slotName=kml2dg"
-                +"&databaseHostname=172.25.0.1"
+                +"&databaseHostname="+postgresHost
                 +"&databaseUser="+postgresUsername
                 +"&databasePassword="+postgresPassword
                 +"&databaseServerName=localhost-postgres"
@@ -98,7 +130,7 @@ public class Rotas extends EndpointRouteBuilder {
                 .when(isSalarioEvent)
                     .filter(isCreateOrUpdateEvent)
                         .convertBodyTo(SalarioCDC.class)
-                        .log(LoggingLevel.TRACE, "Convertido para classe ${body}")
+                        .log(LoggingLevel.INFO, "Convertido para classe ${body}")
                         .bean(store,"readFromStoreAndAddSalario")
                     .endChoice()
                 .otherwise()
