@@ -7,13 +7,12 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.endpoint.EndpointRouteBuilder;
 import org.apache.camel.component.debezium.DebeziumConstants;
 import org.apache.camel.component.infinispan.InfinispanConstants;
-import org.apache.camel.model.dataformat.JsonLibrary;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import io.debezium.data.Envelope;
 import br.com.als.schema.ClienteCDC;
 import br.com.als.schema.SalarioCDC;
+import io.debezium.data.Envelope;
 
 @ApplicationScoped
 public class Rotas extends EndpointRouteBuilder {
