@@ -14,6 +14,8 @@ There is no implementation of secutity protocols, just because the matter of pro
 
 3. Quarkus component using Camel with Debezium e Infinispan extensions.
 
+4. Monitoring stack with prometheus and grafana containers
+
 ## Running
 1. Setting-up Infinispan container
 * Go to Infinispan-docker folder and run docker-compose
@@ -58,7 +60,7 @@ CREATE TABLE "public"."ClienteCDC" (
     "cd_cli" integer DEFAULT nextval('"TabelaCDC_cd_cli_seq"') NOT NULL,
     "nm_cli" character varying(60) NOT NULL,
     "cd_cpf" numeric(11,0) NOT NULL,
-    "ts_atl" timestamp NOT NULL,
+    "ts_atl" timestamp DEFAULT now() NOT NULL,
     CONSTRAINT "TabelaCDC_pkey" PRIMARY KEY ("cd_cli")
 ) WITH (oids = false);
 
@@ -87,12 +89,23 @@ cd quarkus-kml-postgres2infinispan
 ## Working
 Once the application is up, you can use the Adminer UI (localhost:8080) to add, update and delete rows and see how it appears in the infinispan web console (localhost:11222).
 
+### Generating events in Postres Database
+
+Insert command in Postgres Database to observe cache updates:
+```
+INSERT INTO "ClienteCDC" (nm_cli, cd_cpf)  (
+    SELECT 
+       'Cliente '  || md5(random()::text),
+       floor(random() * 99999999999 + 1) 
+    FROM generate_series(1, < NUMBER OF ROWS TO INSERT >)
+)
+```
+
 ## Backlog
 ### In this project
-1. Treatment of deletion operation from DB
-2. Struct and expose metrics
-
+1. Enhance metrics labeling in prometheus and adjust grafana dashboard
+2. Automate setting-up project
 
 ### Complement of project
-1. Component to make Ramdom operations in the BD
-2. Another component to listen to Infinispan events of the 'cliente' cache and calculaing how long it takes to go from table to cache using this approach.
+1. Another component to listen to Infinispan events of the 'cliente' cache and calculaing how long it takes to go from table to cache using this approach.
+2. Implement kubernetes version of running
