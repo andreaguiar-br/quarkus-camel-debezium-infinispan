@@ -85,6 +85,14 @@ cd quarkus-kml-postgres2infinispan
 ```
 * Any additional documentation of this project is [here](./quarkus-kml-postgres2infinispan/README.md)
 
+4. Running monitoring stack
+* Go to [monitoracao](./monitoracao) folder and run docker-compose
+```shell script
+cd monitoracao
+docker-compose up -d
+cd ..
+```
+The prometheus can be accessed at http://localhost:9090 and grafana accessed at http://localhost:3000 with "admin" and "password" as login/pswd credentials
 
 ## Working
 Once the application is up, you can use the Adminer UI (localhost:8080) to add, update and delete rows and see how it appears in the infinispan web console (localhost:11222).
