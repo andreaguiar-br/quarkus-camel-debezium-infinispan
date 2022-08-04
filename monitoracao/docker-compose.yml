@@ -1,0 +1,42 @@
+version: "3.5"
+
+services:
+
+  prometheus:
+    image: prom/prometheus
+    hostname: prometheus
+    network_mode: "host"
+    container_name: prometheus
+    restart: always
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - vol-prometheus:/prometheus
+    ports:
+      - "9090:9090"
+    # networks:
+      # - net-infinispan
+
+
+  grafana:
+    image: grafana/grafana-oss
+    hostname: grafana
+    network_mode: "host"
+    container_name: grafana
+    restart: always
+    volumes:
+      - vol-grafana:/var/lib/grafana
+    ports:
+      - "3000:3000"
+    # networks:
+      # - net-infinispan
+
+
+# networks:
+#   default:
+#     name: host
+#     # driver: bridge
+#     external: true
+
+volumes:
+  vol-grafana:
+  vol-prometheus:

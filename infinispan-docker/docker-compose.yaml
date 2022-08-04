@@ -6,10 +6,6 @@ services:
     container_name: infinispan_1
     image: quay.io/infinispan/server:13.0
     restart: always
-    # command: custom/clustered-docker
-    # command: /my-config/clustered-docker
-    # depends_on:
-      # - oracle
     environment:
       - IDENTITIES_BATCH="/user-config/identities.batch"
     ports:
@@ -18,6 +14,7 @@ services:
       - $PWD/driver:/opt/infinispan/server/lib/
       - $PWD/custom:/my-config/
       - $PWD/user-config:/user-config/
+      - $PWD/user-config/my-infinispan-config.xml:/opt/infinispan/server/conf/infinispan.xml
       # - vol-infinispan_1:/opt/infinispan/server/data
   infinispan-2:
     hostname: infinispan_2
@@ -36,6 +33,7 @@ services:
       - $PWD/driver:/opt/infinispan/server/lib/
       - $PWD/custom:/my-config/
       - $PWD/user-config:/user-config/
+      - $PWD/user-config/my-infinispan-config.xml:/opt/infinispan/server/conf/infinispan.xml
       # - vol-infinispan_2:/opt/infinispan/server/data
   infinispan-3:
     hostname: infinispan_3
@@ -54,6 +52,7 @@ services:
       - $PWD/driver:/opt/infinispan/server/lib/
       - $PWD/custom:/my-config/
       - $PWD/user-config:/user-config/
+      - $PWD/user-config/my-infinispan-config.xml:/opt/infinispan/server/conf/infinispan.xml
       # - vol-infinispan_3:/opt/infinispan/server/data
 
 networks:
