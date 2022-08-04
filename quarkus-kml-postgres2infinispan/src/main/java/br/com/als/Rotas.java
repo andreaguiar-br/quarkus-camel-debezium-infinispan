@@ -35,6 +35,7 @@ public class Rotas extends EndpointRouteBuilder {
 
     static final String ROUTE_GET_AGGREGATE = "direct:getCliente";
     static final String ROUTE_WRITE_AGGREGATE = "direct:writeCliente";
+    static final String ROUTE_REMOVE_AGGREGATE = "direct:removeCliente";
 
     static final String ROUTE_GET_TEMP_SALARY = "direct:getSalario";
     static final String ROUTE_WRITE_TEMP_SALARY = "direct:writeSalario";
@@ -54,10 +55,15 @@ public class Rotas extends EndpointRouteBuilder {
         // .to(log("hi").showExchangePattern(true).showBodyType(false));
 
         final Predicate isCreateOrUpdateEvent = header(DebeziumConstants.HEADER_OPERATION).in(
-                constant(Envelope.Operation.READ.code()),
-                constant(Envelope.Operation.CREATE.code()),
-                constant(Envelope.Operation.UPDATE.code()));
-
+                constant(Envelope.Operation.READ.code()).getExpression(),
+                constant(Envelope.Operation.CREATE.code()).getExpression(),
+                constant(Envelope.Operation.UPDATE.code()).getExpression());
+ 
+        final Predicate isDeleteEvent = header(DebeziumConstants.HEADER_OPERATION).in(
+                constant(Envelope.Operation.TRUNCATE.code()).getExpression(),
+                constant(Envelope.Operation.DELETE.code()).getExpression());
+        
+        
         final Predicate isClienteEvent = header(DebeziumConstants.HEADER_IDENTIFIER).endsWith(EVENT_TYPE_CLIENTE);
 
         final Predicate isSalarioEvent = header(DebeziumConstants.HEADER_IDENTIFIER).endsWith(EVENT_TYPE_SALARIO);
@@ -81,15 +87,18 @@ public class Rotas extends EndpointRouteBuilder {
                 .log(LoggingLevel.TRACE, "Marshalled question ${body}")
                 .setHeader(InfinispanConstants.VALUE).body()
                 .to(ROUTE_STORE_CLIENTE_AGGREGATE);
-
-        from(ROUTE_WRITE_TEMP_SALARY)
-                .routeId(Rotas.class.getSimpleName() + ".SalvaSalarioTemp")
-                // .setHeader(InfinispanConstants.KEY).simple("${headers.CamelInfinispanKey}")
-                .setHeader(InfinispanConstants.VALUE).body()
-                .log(LoggingLevel.TRACE, "put Key:${headers.CamelInfinispanKey} / ValueKey:${headers.CamelInfinispanValue} / Body:${body}")
+ 
+        from(ROUTE_REMOVE_AGGREGATE)
+                .routeId(Rotas.class.getSimpleName() + ".RemoveCliente")
+                .setHeader(InfinispanConstants.KEY).simple("${body}")
+                .setHeader(InfinispanConstants.OPERATION).constant("REMOVE")
+                // .setHeader(InfinispanConstants.RESULT_HEADER).constant("resultado")
                 // .marshal().json(JsonLibrary.Jackson)
-                // .log(LoggingLevel.INFO, "Marshalled question ${headers} - ${body}");
-                .to(ROUTE_STORE_SALARY_TEMP_AGGREGATE);
+                .log(LoggingLevel.TRACE, "ToInfinispan: Removendo Cliente:${body}")
+                // .setHeader(InfinispanConstants.VALUE).body()
+                .to(ROUTE_STORE_CLIENTE_AGGREGATE)
+                .log(LoggingLevel.TRACE, "${headers} Body:${body} Result:${headerResult}");
+                
 
         from(ROUTE_GET_TEMP_SALARY)
                 .routeId(Rotas.class.getSimpleName() + ".BuscaSalarioTemp")
@@ -103,6 +112,28 @@ public class Rotas extends EndpointRouteBuilder {
                 .to(ROUTE_STORE_SALARY_TEMP_AGGREGATE)
                 .filter(body().isNotNull())
                 .log(LoggingLevel.WARN, "retorno ${body}");
+
+        from(ROUTE_WRITE_TEMP_SALARY)
+                .routeId(Rotas.class.getSimpleName() + ".SalvaSalarioTemp")
+                // .setHeader(InfinispanConstants.KEY).simple("${headers.CamelInfinispanKey}")
+                .setHeader(InfinispanConstants.VALUE).body()
+                .log(LoggingLevel.TRACE, "put Key:${headers.CamelInfinispanKey} / ValueKey:${headers.CamelInfinispanValue} / Body:${body}")
+                // .marshal().json(JsonLibrary.Jackson)
+                // .log(LoggingLevel.INFO, "Marshalled question ${headers} - ${body}");
+                .to(ROUTE_STORE_SALARY_TEMP_AGGREGATE);
+                
+
+        from(ROUTE_REMOVE_TEMP_SALARY)
+                .routeId(Rotas.class.getSimpleName() + ".RemoveSalarioTemp")
+                .setHeader(InfinispanConstants.KEY).simple("${body}")
+                .setHeader(InfinispanConstants.OPERATION).constant("REMOVE")
+                // .setHeader(InfinispanConstants.RESULT_HEADER).constant("resultado")
+                // .marshal().json(JsonLibrary.Jackson)
+                .log(LoggingLevel.TRACE, "ToInfinispan: Removendo SalarioOrfão do Cliente:${body}")
+                // .setHeader(InfinispanConstants.VALUE).body()
+                .to(ROUTE_STORE_SALARY_TEMP_AGGREGATE)
+                .log(LoggingLevel.TRACE, "${headers} ${body} ${headerResult}");
+
 
         from(debeziumPostgres(
                 postgresUri+"?"
@@ -119,17 +150,30 @@ public class Rotas extends EndpointRouteBuilder {
                 .log(LoggingLevel.TRACE,"--> Para o infinispan: KEY:${headers.CamelDebeziumKey}  VALUE: ${body}")
                 .choice()
                     .when(isClienteEvent)
-                    .filter(isCreateOrUpdateEvent)
-                        .convertBodyTo(ClienteCDC.class)
-                        .log(LoggingLevel.TRACE, "Convertido para classe ${body}")
-                        .bean(store, "readFromStoreAndUpdateIfNeeded")
+                    //TODO: Tratar deleção
+                        .choice()
+                        .when(isCreateOrUpdateEvent)
+                          .log(LoggingLevel.DEBUG, "Create/update: ${body} OP:${headers.CamelDebeziumOperation} ")
+                          .convertBodyTo(ClienteCDC.class)
+                          .log(LoggingLevel.DEBUG, "Convertido para classe ${body}")
+                          .bean(store, "readFromStoreAndUpdateIfNeeded")
+                        //   .endChoice()
+                        .when(isDeleteEvent)
+                          .log(LoggingLevel.DEBUG, "Deletando : KEY:${headers.CamelDebeziumKey} OP:${headers.CamelDebeziumOperation} ")
+                        //   .convertHeaderTo(ClienteCDC.class)
+                        //   .log(LoggingLevel.DEBUG, "Convertido para classe ${body}")
+                          .setBody(simple("${headers.CamelDebeziumKey}"))
+                          .bean(store, "deleteCliente")
+                        //   .endChoice()
                         // .process(new Processador())
                         // .to(ROUTE_MAIL_QUESTION_CREATE)
-                    .endChoice()
+                        .otherwise()
+                                .log(LoggingLevel.WARN, "Operação Não Identificada ${headers[" + DebeziumConstants.HEADER_IDENTIFIER + "]}")
+                                .endChoice()
                 .when(isSalarioEvent)
                     .filter(isCreateOrUpdateEvent)
                         .convertBodyTo(SalarioCDC.class)
-                        .log(LoggingLevel.INFO, "Convertido para classe ${body}")
+                        .log(LoggingLevel.DEBUG, "Convertido para classe ${body}")
                         .bean(store,"readFromStoreAndAddSalario")
                     .endChoice()
                 .otherwise()

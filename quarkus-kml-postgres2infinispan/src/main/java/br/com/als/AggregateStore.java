@@ -8,6 +8,7 @@ package br.com.als;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.infinispan.InfinispanConstants;
+import org.apache.kafka.connect.data.Struct;
 import org.jboss.logging.Logger;
 
 import br.com.als.schema.ClienteCDC;
@@ -16,7 +17,7 @@ import br.com.als.schema.SalariosOrfaos;
 
 public class AggregateStore {
 
-    static String PROP_AGGREGATE = "aggregate";
+    static String PROP_AGGREGATE = "Cliente";
     private static final Logger LOGGER = Logger.getLogger(AggregateStore.class);
 
     public AggregateStore() {
@@ -25,7 +26,12 @@ public class AggregateStore {
     public void readFromStoreAndUpdateIfNeeded(Exchange exchange) {
         final ClienteCDC clienteCDC = exchange.getMessage().getBody(ClienteCDC.class);
         final ProducerTemplate send = exchange.getContext().createProducerTemplate();
-
+        
+        // if (clienteCDC == null){
+        //     LOGGER.errorf("Cliente NULL no ExchangeID=%s da Rota=%s",exchange.getExchangeId(), exchange.getFromRouteId();
+        //     return;
+        // }
+        
         ClienteCDC aggregate = send.requestBody(Rotas.ROUTE_GET_AGGREGATE, clienteCDC.getCd_cli(), ClienteCDC.class);
         if (aggregate == null) {
         
@@ -40,6 +46,37 @@ public class AggregateStore {
         }
         updateAggregate(exchange, clienteCDC, send);
         exchange.getMessage().setBody(clienteCDC);
+    }
+
+    public void deleteCliente(Exchange exchange) {
+        final Integer codCliente = exchange.getMessage().getBody(Struct.class).getInt32("cd_cli");
+        final ProducerTemplate send = exchange.getContext().createProducerTemplate();
+
+        LOGGER.debug("Removendo cliente : "+codCliente);
+        
+        send.sendBody(Rotas.ROUTE_REMOVE_AGGREGATE, codCliente);
+        send.sendBody(Rotas.ROUTE_REMOVE_TEMP_SALARY, codCliente);
+        exchange.setProperty(PROP_AGGREGATE, codCliente);
+
+        // if (clienteCDC == null){
+        //     LOGGER.errorf("Cliente NULL no ExchangeID=%s da Rota=%s",exchange.getExchangeId(), exchange.getFromRouteId();
+        //     return;
+        // }
+        
+        // ClienteCDC aggregate = send.requestBody(Rotas.ROUTE_REMOVE_AGGREGATE, codCliente, ClienteCDC.class);
+        // if (aggregate == null) {
+        
+        //     aggregate = clienteCDC;
+        
+        //     SalariosOrfaos salariosOrfaos = send.requestBody(Rotas.ROUTE_GET_TEMP_SALARY, clienteCDC.getCd_cli(), SalariosOrfaos.class);
+        //     if (salariosOrfaos != null) {
+        //         LOGGER.trace("Salarios Orfaos acharam o pai: : "+salariosOrfaos);
+        //         aggregate.setSalarios(salariosOrfaos.getSalarios());
+        //     }
+    
+        // }
+        // updateAggregate(exchange, clienteCDC, send);
+        // exchange.getMessage().setBody(clienteCDC);
     }
 
     public void readFromStoreAndAddSalario(Exchange exchange) {
