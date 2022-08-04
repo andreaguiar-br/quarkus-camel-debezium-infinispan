@@ -94,6 +94,8 @@ cd ..
 ```
 The prometheus can be accessed at http://localhost:9090 and grafana accessed at http://localhost:3000 with "admin" and "password" as login/pswd credentials
 
+For the first login in grafana, import [this](./monitoracao/infinispan-grafana.json) dashboard .
+
 ## Working
 Once the application is up, you can use the Adminer UI (localhost:8080) to add, update and delete rows and see how it appears in the infinispan web console (localhost:11222).
 
