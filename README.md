@@ -70,12 +70,12 @@ CREATE TABLE "public"."SalarioCDC" (
     "cd_cli" integer NOT NULL,
     "AnoMes" integer NOT NULL,
     "renda" numeric(15,2) NOT NULL,
-    "ts_atl" timestamp NOT NULL,
+    "ts_atl" timestamp DEFAULT now() NOT NULL,
     CONSTRAINT "SalarioCDC_cd_cli_AnoMes" PRIMARY KEY ("cd_cli", "AnoMes")
 ) WITH (oids = false);
 
 
-ALTER TABLE ONLY "public"."SalarioCDC" ADD CONSTRAINT "SalarioCDC_cd_cli_fkey" FOREIGN KEY (cd_cli) REFERENCES "ClienteCDC"(cd_cli) ON UPDATE CASCADE ON DELETE RESTRICT NOT DEFERRABLE;
+ALTER TABLE ONLY "public"."SalarioCDC" ADD CONSTRAINT "SalarioCDC_cd_cli_fkey" FOREIGN KEY (cd_cli) REFERENCES "ClienteCDC"(cd_cli) ON UPDATE CASCADE ON DELETE CASCADE NOT DEFERRABLE;
 ```
 3. Running the source-sink camel quarkus
 * Go to Quarkus-kml-postgres2infinispan folder and execute the application
@@ -109,6 +109,22 @@ INSERT INTO "ClienteCDC" (nm_cli, cd_cpf)  (
        floor(random() * 99999999999 + 1) 
     FROM generate_series(1, < NUMBER OF ROWS TO INSERT >)
 )
+```
+
+and 
+
+```
+WITH cliente AS (
+SELECT cd_cli FROM "ClienteCDC" WHERE random() < 0.25 limit 1000
+)
+INSERT INTO "SalarioCDC" ("cd_cli", "AnoMes", "renda") (
+    SELECT 
+       cliente.cd_cli,
+       (2022 - floor(random() * 40))*100 +  floor(random() * 12 ),
+       round((random()::decimal * 99999 + 1) , 2) 
+    FROM generate_series(1, < NUMBER OF ROWS TO INSERT >), cliente
+
+) ON CONFLICT ON CONSTRAINT "SalarioCDC_cd_cli_AnoMes" DO NOTHING
 ```
 
 ## Backlog
