@@ -103,14 +103,18 @@ Once the application is up, you can use the Adminer UI (localhost:8080) to add, 
 
 Insert command in Postgres Database to observe cache updates:
 ```
+WITH RANDOMCODE AS (
+   SELECT DISTINCT       floor(random() * 9999 + 1) AS cd_cli
+   FROM generate_series(1, < NUMBER OF ROWS TO INSERT >)
+)
 INSERT INTO "ClienteCDC" (cd_cli, nm_cli, cd_cpf)  (
     SELECT
-       floor(random() * 999999999 + 1) ,
+       RANDOMCODE.cd_cli,
        'Cliente '  || md5(random()::text),
        floor(random() * 99999999999 + 1) 
-    FROM generate_series(1, 5000)
-) ON CONFLICT ON CONSTRAINT "TabelaCDC_pkey" DO 
-    UPDATE SET nm_cli = 'Cliente '|| "ClienteCDC".cd_cli || 'Atualizado',
+    FROM RANDOMCODE
+) ON CONFLICT (cd_cli) DO 
+    UPDATE SET nm_cli = 'Cliente '|| "ClienteCDC".cd_cli || ' Atualizado',
                ts_atl = now();
 ```
 
