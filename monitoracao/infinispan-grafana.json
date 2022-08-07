@@ -98,7 +98,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "base_cpu_processCpuLoad{job=~\"$jobs\"}",
+          "expr": "base_cpu_processCpuLoad{instance=~\"$instancia\"}",
           "interval": "",
           "legendFormat": "{{instance}}",
           "range": true,
@@ -110,14 +110,14 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "base_cpu_processCpuLoad_percent{job=~\"$jobs\"}",
+          "expr": "base_cpu_processCpuLoad_percent{instance=~\"$instancia\"}",
           "hide": false,
           "legendFormat": "{{instance}}",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "CPU Load JVM (\"$jobs\")",
+      "title": "CPU Load JVM (\"$instancia\")",
       "type": "stat"
     },
     {
@@ -175,14 +175,14 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "base_thread_daemon_count{job=~\"$jobs\"}",
+          "expr": "base_thread_daemon_count{instance=~\"$instancia\"}",
           "interval": "",
-          "legendFormat": "{{job}}-{{instance}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Threads JVM (\"$jobs\")",
+      "title": "Threads JVM (\"$instancia\")",
       "type": "stat"
     },
     {
@@ -239,14 +239,14 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "base_memory_committedNonHeap_bytes{job=~\"$jobs\"}",
+          "expr": "base_memory_committedNonHeap_bytes{instance=~\"$instancia\"}",
           "interval": "",
-          "legendFormat": "{{job}}-{{instance}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "JVM NonHeapMemory Commited ($jobs)",
+      "title": "JVM NonHeapMemory Commited ($instancia)",
       "type": "stat"
     },
     {
@@ -300,10 +300,10 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "base_memory_committedHeap_bytes{job=~\"$jobs\"}",
+          "expr": "base_memory_committedHeap_bytes{instance=~\"$instancia\"}",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{job}}-{{instance}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         },
@@ -313,15 +313,15 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "base_memory_usedHeap_bytes{job=~\"$jobs\"}",
+          "expr": "base_memory_usedHeap_bytes{instance=~\"$instancia\"}",
           "hide": true,
           "interval": "",
-          "legendFormat": "{{job}}-{{instance}}-Used",
+          "legendFormat": "{{instance}}-Used",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "JVM HeapMemory Commited",
+      "title": "JVM HeapMemory Commited (\"$instancia\")",
       "type": "stat"
     },
     {
@@ -375,10 +375,10 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "base_memory_committedHeap_bytes{job=~\"$jobs\"}",
+          "expr": "base_memory_committedHeap_bytes{instance=~\"$instancia\"}",
           "hide": true,
           "interval": "",
-          "legendFormat": "{{job}}-{{instance}}",
+          "legendFormat": "{instance}}",
           "range": true,
           "refId": "A"
         },
@@ -388,15 +388,15 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "base_memory_usedHeap_bytes{job=~\"$jobs\"}",
+          "expr": "base_memory_usedHeap_bytes{instance=~\"$instancia\"}",
           "hide": false,
           "interval": "",
-          "legendFormat": "{{job}}-{{instance}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "JVM HeapMemory Used ($jobs)",
+      "title": "JVM HeapMemory Used ($instancia)",
       "type": "stat"
     },
     {
@@ -450,14 +450,14 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "base_memory_usedNonHeap_bytes{job=~\"$jobs\"}",
+          "expr": "base_memory_usedNonHeap_bytes{instance=~\"$instancia\"}",
           "interval": "",
-          "legendFormat": "{{job}}-{{instance}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "JVM NonHeapMemory Used ($jobs)",
+      "title": "JVM NonHeapMemory Used ($instancia)",
       "type": "stat"
     },
     {
@@ -478,6 +478,7 @@
         "type": "prometheus",
         "uid": "SEIfGQgVz"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -523,14 +524,14 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "vendor_cache_manager_meu_infinispan_cache_container_health_total_memory_kb{job=~\"$jobs\"}",
+          "expr": "vendor_cache_manager_meu_infinispan_cache_container_health_total_memory_kb{instance=~\"$instancia\"}",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Cache Container Memory Used",
+      "title": "Cache Container Memory Used($instancia)",
       "type": "stat"
     },
     {
@@ -584,14 +585,14 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "vendor_BufferPool_used_memory_direct_bytes{job=~\"$jobs\"}",
+          "expr": "vendor_BufferPool_used_memory_direct_bytes{instance=~\"$instancia\"}",
           "interval": "",
-          "legendFormat": "{{job}}-{{instance}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "BufferPool Used Memory",
+      "title": "BufferPool Used Memory($instancia)",
       "type": "stat"
     },
     {
@@ -599,6 +600,7 @@
         "type": "prometheus",
         "uid": "SEIfGQgVz"
       },
+      "description": "",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -648,9 +650,9 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "vendor_cache_manager_meu_infinispan_cache_cliente_statistics_data_memory_used{job=~\"$jobs\"}",
+          "expr": "vendor_cache_manager_meu_infinispan_cache_cliente_statistics_data_memory_used{instance=~\"$instancia\"}",
           "interval": "",
-          "legendFormat": "data-{{node}}",
+          "legendFormat": "data-{{instance}}",
           "range": true,
           "refId": "A"
         },
@@ -660,15 +662,15 @@
             "uid": "SEIfGQgVz"
           },
           "editorMode": "code",
-          "expr": "vendor_cache_manager_meu_infinispan_cache_cliente_statistics_off_heap_memory_used{job=~\"$jobs\"}",
+          "expr": "vendor_cache_manager_meu_infinispan_cache_cliente_statistics_off_heap_memory_used{instance=~\"$instancia\"}",
           "hide": false,
           "interval": "",
-          "legendFormat": "off-heap-{{node}}",
+          "legendFormat": "off-heap-{{instance}}",
           "range": true,
           "refId": "B"
         }
       ],
-      "title": "Memory Used - Cliente",
+      "title": "Memory Used - Cliente($instancia)",
       "type": "stat"
     },
     {
@@ -756,7 +758,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_container_stats_average_read_time_nanos",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -849,7 +851,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_container_stats_average_write_time_nanos",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -942,7 +944,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_container_stats_average_remove_time_nanos",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1035,7 +1037,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_cliente_statistics_average_read_time_nanos",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1128,7 +1130,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_cliente_statistics_average_write_time_nanos",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1221,7 +1223,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_cliente_statistics_store_times_mean_seconds",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1314,7 +1316,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_salario_temp_statistics_average_read_time_nanos",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1407,7 +1409,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_salario_temp_statistics_average_write_time_nanos",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1500,7 +1502,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_cliente_statistics_average_remove_time_nanos",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1562,7 +1564,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_cliente_cluster_cache_stats_number_of_entries",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1625,7 +1627,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_salario_temp_cluster_cache_stats_number_of_entries",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -1718,7 +1720,7 @@
           "exemplar": false,
           "expr": "vendor_cache_manager_meu_infinispan_cache_salario_temp_statistics_average_remove_time_nanos",
           "interval": "",
-          "legendFormat": "{{node}}",
+          "legendFormat": "{{instance}}",
           "range": true,
           "refId": "A"
         }
@@ -2120,7 +2122,35 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "continuous-GrYlRd"
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
           "mappings": [],
           "thresholds": {
@@ -2137,26 +2167,22 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 14,
         "w": 7,
         "x": 7,
         "y": 59
       },
       "id": 36,
       "options": {
-        "displayMode": "lcd",
-        "minVizHeight": 10,
-        "minVizWidth": 0,
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
         },
-        "showUnfilled": true,
-        "text": {}
+        "tooltip": {
+          "mode": "multi",
+          "sort": "none"
+        }
       },
       "pluginVersion": "9.0.4",
       "targets": [
@@ -2167,15 +2193,15 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "application_camel_route_exchanges_total",
+          "expr": "rate(application_camel_route_exchanges_total[1m])",
           "interval": "",
           "legendFormat": "{{routeId}}",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Camel - RouteExchanges Total",
-      "type": "bargauge"
+      "title": "Camel - RouteExchanges Rate/s",
+      "type": "timeseries"
     },
     {
       "datasource": {
@@ -2220,6 +2246,7 @@
             "lastNotNull"
           ],
           "fields": "",
+          "limit": 1,
           "values": false
         },
         "showThresholdLabels": false,
@@ -2234,10 +2261,11 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "application_camel_route_processing_rate_per_second",
+          "expr": "rate(application_camel_route_exchanges_total[1m])",
+          "instant": true,
           "interval": "",
           "legendFormat": "{{routeId}}",
-          "range": true,
+          "range": false,
           "refId": "A"
         }
       ],
@@ -2377,7 +2405,7 @@
         "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "max"
           ],
           "fields": "",
           "values": false
@@ -2395,10 +2423,25 @@
           "editorMode": "code",
           "exemplar": false,
           "expr": "Max(application_camel_route_processing_rate_per_second) by (routeId)",
+          "hide": true,
           "interval": "",
           "legendFormat": "{{routeId}}",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "SEIfGQgVz"
+          },
+          "editorMode": "code",
+          "exemplar": false,
+          "expr": "rate(application_camel_route_exchanges_total[1m])",
+          "hide": false,
+          "interval": "",
+          "legendFormat": "{{routeId}}",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Camel - MAX exchange p/segundo",
@@ -2413,7 +2456,7 @@
     "list": [
       {
         "current": {
-          "selected": false,
+          "selected": true,
           "text": [
             "All"
           ],
@@ -2425,39 +2468,12 @@
           "type": "prometheus",
           "uid": "SEIfGQgVz"
         },
-        "definition": "label_values(job)",
-        "hide": 0,
-        "includeAll": true,
-        "label": "Job",
-        "multi": true,
-        "name": "jobs",
-        "options": [],
-        "query": {
-          "query": "label_values(job)",
-          "refId": "StandardVariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "type": "query"
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "0.0.0.0:11222",
-          "value": "0.0.0.0:11222"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "SEIfGQgVz"
-        },
         "definition": "label_values(instance)",
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": "Instancia",
-        "multi": false,
-        "name": "Instance",
+        "multi": true,
+        "name": "instancia",
         "options": [],
         "query": {
           "query": "label_values(instance)",
@@ -2472,13 +2488,13 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Teste Infinispan",
   "uid": "QiARtQgVk",
-  "version": 27,
+  "version": 38,
   "weekStart": ""
 }
