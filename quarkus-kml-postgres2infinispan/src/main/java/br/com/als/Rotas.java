@@ -138,6 +138,8 @@ public class Rotas extends EndpointRouteBuilder {
         from(debeziumPostgres(
                 postgresUri+"?"
                 +"offsetStorageFileName=./offset-file-1.dat"
+                +"offsetStoragePartitions=10"
+                +"maxBatchSize=4096"
                 +"&slotName=kml2dg"
                 +"&databaseHostname="+postgresHost
                 +"&databaseUser="+postgresUsername
