@@ -1,0 +1,35 @@
+{
+  "distributed-cache": {
+    "mode": "SYNC",
+   "owners":"2",
+   "segments": "256",
+   "l1-lifespan": "5000",
+    "l1-cleanup-interval": "60000",
+    "encoding": {
+      "media-type": "application/x-protostream"
+    },
+    "statistics": true,
+
+    "memory" : {
+        "storage" : "OFF_HEAP",
+        "max-count" : "500",
+        "when-full" : "REMOVE"
+      },
+    "persistence": {
+        "passivation": false,
+        "file-store" : {
+          "shared": false,
+          "fetch-state":true,
+          "data": {
+            "path": "data"
+          },
+          "index": {
+            "path": "index"
+          },
+          "write-behind": {
+            "modification-queue-size": "2048"
+          }
+        }
+      }
+  }
+}
