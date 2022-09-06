@@ -1,20 +1,26 @@
-# Quarkus-Camel with Debezium and Infinispan
+# Quarkus-Camel with Debezium(optionally w/Kafka) and Infinispan
 
 ## Project for Leaning  -  It's not intended to be used in production
 
 This project is only for apply some concepts of using the framework Apáche-Camel in a Quarkus project for sourcing from a Change Data Capture provided by Debezium engine and sink into a Infinispan cluster.
 
+There is 2 versions of the source-sink process:
+- Using Camel-Quarkus with Debezium Embbeded plugin (camel routing directly from postgres to a Infinispan cache)
+- Using Kafka + Kafka-Connect with debezium plugin + Camel-quarkus routing from kafka to a Infinispan cache.
+
 There is no implementation of secutity protocols, just because the matter of proof of concept this project has been based.
 
 ## Components
 
-1. Postgres container configured to use [logical decoding](https://www.postgresql.org/docs/current/logicaldecoding-explanation.html), following [Debezium Postgres Connector recomendation](https://debezium.io/documentation/reference/stable/connectors/postgresql.html) with a adminer for UI with the databases.
+1. [Postgres container](./postgres-docker/docker-compose.yml) configured to use [logical decoding](https://www.postgresql.org/docs/current/logicaldecoding-explanation.html), following [Debezium Postgres Connector recomendation](https://debezium.io/documentation/reference/stable/connectors/postgresql.html) with a adminer for UI with the databases.
 
-2. Infinispan container (in a cluster of 3).
+2. [Infinispan container](./infinispan-docker/docker-compose.yaml) (in a cluster of 3).
 
-3. Quarkus component using Camel with Debezium e Infinispan extensions.
+3. [Monitoring stack](./monitoracao/docker-compose.yml) with prometheus and grafana containers
 
-4. Monitoring stack with prometheus and grafana containers
+4. Sourcing-sink implementation
+  a. [Quarkus component using Camel with Debezium e Infinispan extensions.](./quarkus-kml-postgres2infinispan/)
+  b. [Kafka + Zookeeper + KafkaConnect + KafkaUI containers](./kafka-docker/docker-compose.yml) and [Quarkus-Camel component routing from kafka to Infinispan.](./quarkus-kml-kafka2infinispan/)
 
 ## Running
 1. Setting-up Infinispan container
@@ -77,15 +83,7 @@ CREATE TABLE "public"."SalarioCDC" (
 
 ALTER TABLE ONLY "public"."SalarioCDC" ADD CONSTRAINT "SalarioCDC_cd_cli_fkey" FOREIGN KEY (cd_cli) REFERENCES "ClienteCDC"(cd_cli) ON UPDATE CASCADE ON DELETE CASCADE NOT DEFERRABLE;
 ```
-3. Running the source-sink camel quarkus
-* Go to Quarkus-kml-postgres2infinispan folder and execute the application
-```shell script
-cd quarkus-kml-postgres2infinispan
-./mvnw compile quarkus:dev
-```
-* Any additional documentation of this project is [here](./quarkus-kml-postgres2infinispan/README.md)
-
-4. Running monitoring stack
+3. Running monitoring stack
 * Go to [monitoracao](./monitoracao) folder and run docker-compose
 ```shell script
 cd monitoracao
@@ -94,10 +92,41 @@ cd ..
 ```
 The prometheus can be accessed at http://localhost:9090 and grafana accessed at http://localhost:3000 with "admin" and "password" as login/pswd credentials
 
-For the first login in grafana, import [this](./monitoracao/infinispan-grafana.json) dashboard .
+For the first login in grafana, import [Infinispan-Camel](./monitoracao/infinispan-grafana.json) dashboard and [Posgres-kafka-connector](./monitoracao/posgres-connector.json) dashboard.
+
+4a. Running the source-sink camel quarkus with Debezium Embbeded
+* Go to quarkus-kml-postgres2infinispan folder and execute the application
+```shell script
+cd quarkus-kml-postgres2infinispan
+./run.sh
+```
+* Any additional documentation of this project is [here](./quarkus-kml-postgres2infinispan/README.md)
+
+4b. Running a Kafka + Camel-Quarkus version
+* Go to [kafka-docker](./kafka-docker/) folder abd run docker-compose
+```shell script
+cd kafka-docker
+docker-compose up -d
+cd ..
+```
+* Run the Kafka-Connect setup to create an connector to postgres with configuration in [connector.json](./kafka-docker/connector.json):
+```shell script
+cd kafka-docker
+./setconnector.sh
+cd ..
+```
+
+* Go to [quarkus-kml-kafka2infinispan](./quarkus-kml-kafka2infinispan/) folder and execute the application
+```shell script
+cd quarkus-kml-kafka2infinispan
+./run.sh
+```
+* Any additional documentation of this project is [here](./quarkus-kml-kafka2infinispan/README.md)
 
 ## Working
 Once the application is up, you can use the Adminer UI (localhost:8080) to add, update and delete rows and see how it appears in the infinispan web console (localhost:11222).
+
+Using the option with kafka, you can also acess KafkaUI in (localhost:8180) to see and manage topics.
 
 ### Generating events in Postres Database
 

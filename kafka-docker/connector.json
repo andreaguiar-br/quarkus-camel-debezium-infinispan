@@ -1,0 +1,20 @@
+{  
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "10.0.2.15",  
+    "database.port": "5432",
+    "database.user": "admin",
+    "database.password": "password",
+    "database.dbname": "postgres",  
+    "log.retention.hours": "2",
+    "decimal.handling.mode":"String",
+    "database.server.name": "localhost-postgres",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schemas.enable": "true",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "delete.retention.ms": "3600000",
+    "task.max":"3",
+    "num.partition":"5",
+    "compression.type":"zstd",
+    "value.converter.schemas.enable": "true"
+  
+}

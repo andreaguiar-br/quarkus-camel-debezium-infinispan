@@ -1,0 +1,15 @@
+{
+  "name": "postgres-kafka-connector",  
+  "config": {  
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "10.0.2.15",  
+    "database.port": "5432",
+    "database.user": "admin",
+    "database.password": "password",
+    "database.dbname": "postgres",  
+    "log.retention.hours": "1440",
+    "database.server.name": "localhost-postgres",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schemas.enable": "true"
+  }
+}

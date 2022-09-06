@@ -1,0 +1,8 @@
+startDelaySeconds: 0
+hostPort: localhost:9999
+username: 
+password: 
+# jmxUrl: service:jmx:rmi:///jndi/rmi://127.0.0.1:9999/jmxrmi
+ssl: false
+rules:
+  - pattern: .*
