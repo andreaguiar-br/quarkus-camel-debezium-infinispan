@@ -6,7 +6,7 @@ import java.util.Set;
 import org.infinispan.protostream.annotations.ProtoDoc;
 import org.infinispan.protostream.annotations.ProtoFactory;
 import org.infinispan.protostream.annotations.ProtoField;
-import org.jboss.logging.Logger;
+// import org.jboss.logging.Logger;
 
 
 @ProtoDoc("@Indexed")
