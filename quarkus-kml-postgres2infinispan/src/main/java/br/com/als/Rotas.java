@@ -111,7 +111,7 @@ public class Rotas extends EndpointRouteBuilder {
                 // .log(LoggingLevel.INFO, "Marshalled question ${headers} - ${body}");
                 .to(ROUTE_STORE_SALARY_TEMP_AGGREGATE)
                 .filter(body().isNotNull())
-                .log(LoggingLevel.WARN, "retorno ${body}");
+                .log(LoggingLevel.TRACE, "retorno ${body}");
 
         from(ROUTE_WRITE_TEMP_SALARY)
                 .routeId(Rotas.class.getSimpleName() + ".SalvaSalarioTemp")

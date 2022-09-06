@@ -39,7 +39,7 @@ nb-configuration.xml
 .env
 
 # arquivos gerados no projeto
-offset-file-1.dat
+offset-file-*
 
 *.log
 *.log.*
