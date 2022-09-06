@@ -24,7 +24,13 @@ scrape_configs:
     static_configs:
       - targets: ['0.0.0.0:8092']
         labels:
-          instance: "kml2infinispan"
+          instance: "kmlPG2infinispan"
+      - targets: ['0.0.0.0:8093']
+        labels:
+          instance: "kmlKafka2infinispan-1"
+      - targets: ['0.0.0.0:8094']
+        labels:
+          instance: "kmlKafka2infinispan-2"
     
   - job_name: dg-cache-monitor
     metrics_path: /q/metrics
@@ -32,6 +38,19 @@ scrape_configs:
       - targets: ['0.0.0.0:8087']
         labels:
           instance: "dg-cache-monitor"
+
+  - job_name: kafka-connect
+    metrics_path: /metrics
+    static_configs:
+      # - targets: ['0.0.0.0:2181']
+      #   labels:
+      #     instance: "Zookeeper"
+      - targets: ['0.0.0.0:7072']
+        labels:
+          instance: "Kafka"
+      - targets: ['0.0.0.0:7073']
+        labels:
+          instance: "KafkaConnect"
 
   - job_name: infinispan
     basic_auth:
