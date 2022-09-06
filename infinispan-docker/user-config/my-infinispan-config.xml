@@ -7,6 +7,7 @@
          <authorization/>
       </security>
       <metrics gauges="true"  histograms="true" />
+      <jmx enabled="true"    domain="example.com"/>
    </cache-container>
 
    <server xmlns="urn:infinispan:server:13.0">
